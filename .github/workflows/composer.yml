@@ -1,0 +1,82 @@
+name: composer
+#run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on:
+  push:
+  #  branches:
+  #    - main
+  pull_request:
+  #  branches:
+  #    - main
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+  Upload_to_GCS:
+    runs-on: ubuntu-latest
+    needs: Explore-GitHub-Actions
+    env:
+      TIMESTAMP_VAR: ${{ format('{0}-{1}-{2}',
+        github.event.repository.name,
+        github.run_number,
+        github.job) }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: create and use  python virtual env
+        run: |
+          echo "--- Current working directory ---"
+          pwd
+          echo "--- Listing top-level files/dirs ---"
+          ls -lR
+          python -m venv  virtual_env
+          source virtual_env/bin/activate
+          echo "--- Initial pip list ---"
+          pip list
+          if [ -f "auto_deploy/requirement.txt" ]; then
+            echo "--- file found ---"
+            pip install -r auto_deploy/requirement.txt
+          fi
+          echo "--- pip list after requirement.txt---"
+          pip list
+          echo "--- Contents of virtual_env/bin/ ---"
+          ls virtual_env/bin/
+          echo "--- Which python ---"
+          which python
+      - name: generate py code and try to run 
+        run: |
+          virtual_env/bin/jupyter nbconvert --to script auto_deploy/test.ipynb --output  to_be_submitted_py
+          cat auto_deploy/to_be_submitted_py.py
+          virtual_env/bin/python auto_deploy/to_be_submitted_py.py 
+      - name: 'Authenticate to Google Cloud using service account key'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+      #- name: 'Upload requirements.txt to GCS'
+      #  uses: 'google-github-actions/upload-cloud-storage@v2'
+      #  with:
+      #    path: './requirements.txt'
+      #    destination: 'yinyan-dataproc-bucket-1/deploy-auto/${{ env.TIMESTAMP_VAR }}'
+      - name: 'Upload to_be_submitted_py.py to GCS'
+        uses: 'google-github-actions/upload-cloud-storage@v2'
+        with:
+          path: './auto_deploy/to_be_submitted_py.py'
+          destination: 'yinyan-dataproc-bucket-1/deploy-auto/${{ env.TIMESTAMP_VAR }}'
+      #- name: zip the python virtual env
+      #  run: |
+      #    zip -r virtual_env.zip virtual_env   
+      #- name: 'Upload python virtual envs in a zip for non s8s dataproc'
+      #  uses: 'google-github-actions/upload-cloud-storage@v2'
+      #  with:
+      #    path: './virtual_env.zip'
+      #   destination: 'yinyan-dataproc-bucket-1/deploy-auto/${{ env.TIMESTAMP_VAR }}'
