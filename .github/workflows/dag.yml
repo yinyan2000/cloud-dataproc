@@ -1,0 +1,41 @@
+name: Deploy DAG to Cloud Composer
+
+on:
+  push:
+
+  pull_request:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: 'Authenticate to Google Cloud using service account key'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: "${{ secrets.GCP_SA_KEY }}"
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Upload PySpark script to GCS
+      run: |-
+        pwd
+        ls ./auto_deploy/
+        gcloud storage cp ./auto_deploy/test.py gs://yinyan-dataproc-bucket-1/deploy-auto/test.py
+
+    - name: Import DAG to Cloud Composer
+      run: |-
+        pwd
+        ls ./auto_deploy/
+        gcloud composer environments storage dags import \
+          --environment yan-autodeploy \
+          --location us-central1 \
+          --source "./auto_deploy/dataproc_test_dag.py"
