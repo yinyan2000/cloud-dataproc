@@ -1,4 +1,4 @@
-name: Deploy DAG to Cloud Composer
+name: Deploy DAG to submit job to ephemeral DPGCE
 
 on:
   push:
@@ -38,4 +38,4 @@ jobs:
         gcloud composer environments storage dags import \
           --environment yan-autodeploy \
           --location us-central1 \
-          --source "./auto_deploy/dataproc_test_dag.py"
+          --source "./auto_deploy/dataproc_test_dag_ephemeral.py"
