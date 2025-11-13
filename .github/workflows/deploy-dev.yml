@@ -38,4 +38,5 @@ jobs:
         gcloud composer environments storage dags import \
           --environment yan-autodeploy \
           --location us-central1 \
-          --source "./auto_deploy/dataproc_test_dag_s8s.py"
+          --source "./auto_deploy/s8s-orchestration-pipeline.py"
+
