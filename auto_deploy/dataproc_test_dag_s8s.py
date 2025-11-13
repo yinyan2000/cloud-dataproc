@@ -24,7 +24,7 @@ with DAG(
     submit_pyspark_batch = DataprocCreateBatchOperator(
         task_id='submit_pyspark_batch',
         batch=PYSPARK_BATCH,
-        batch_id="test-pyspark-batch",
+        batch_id="test-pyspark-batch-{{ ts_nodash | lower | replace('t', '-') }}",
         region='us-central1',
         project_id='google.com:hadoop-cloud-dev',
     )
