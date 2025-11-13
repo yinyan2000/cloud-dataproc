@@ -8,7 +8,7 @@ PYSPARK_JOB = {
     "reference": {"project_id": "google.com:hadoop-cloud-dev"}, # Replace with your project ID if different
     "placement": {"cluster_name": "cluster-yantest"},
     "pyspark_job": {
-        "main_python_file_uri": "gs://yinyan-dataproc-bucket-1/deploy-auto/test.py",
+        "main_python_file_uri": "gs://yinyan-dataproc-bucket-1/deploy-auto/job.py",
     },
 }
 

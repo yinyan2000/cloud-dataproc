@@ -5,7 +5,7 @@ from airflow.utils.dates import days_ago
 # Define the PySpark batch job for Dataproc Serverless
 PYSPARK_BATCH = {
     "pyspark_batch": {
-        "main_python_file_uri": "gs://yinyan-dataproc-bucket-1/deploy-auto/test.py",
+        "main_python_file_uri": "gs://yinyan-dataproc-bucket-1/deploy-auto/job.py",
     },
     "environment_config": {
         "execution_config": {

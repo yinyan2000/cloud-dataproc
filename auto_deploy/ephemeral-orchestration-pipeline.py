@@ -22,7 +22,7 @@ PYSPARK_JOB = {
     "reference": {"project_id": PROJECT_ID},
     "placement": {"cluster_name": CLUSTER_NAME},
     "pyspark_job": {
-        "main_python_file_uri": "gs://yinyan-dataproc-bucket-1/deploy-auto/test.py",
+        "main_python_file_uri": "gs://yinyan-dataproc-bucket-1/deploy-auto/job.py",
     },
 }
 
